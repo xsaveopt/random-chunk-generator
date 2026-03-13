@@ -1,0 +1,7 @@
+name: RandomChunkGenerator
+version: '${project.version}'
+main: me.sratabix.randomchunk.RandomChunkPlugin
+api-version: '1.21'
+load: STARTUP
+author: sratabix
+description: A world generator that uses a different seed for every chunk.
