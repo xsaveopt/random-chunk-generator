@@ -1,35 +1,31 @@
 package me.sratabix.randomchunk;
 
-import org.bukkit.generator.BiomeProvider;
-import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.logging.Logger;
+import java.util.List;
 
 public class RandomChunkPlugin extends JavaPlugin {
 
-    private static Logger logger;
-
     @Override
     public void onEnable() {
-        logger = getLogger();
-        logger.info("RandomChunkGenerator has been enabled!");
+        saveDefaultConfig();
+        FileConfiguration config = getConfig();
+
+        double chance = config.getDouble("corruption-chance", 0.15);
+        boolean chaotic = config.getBoolean("styles.chaotic-heights", true);
+        boolean holes = config.getBoolean("styles.holes", true);
+        boolean scrambled = config.getBoolean("styles.scrambled-blocks", true);
+        List<String> worldFilter = config.getStringList("worlds");
+
+        getServer().getPluginManager().registerEvents(
+                new ChunkCorruptionListener(chance, chaotic, holes, scrambled, worldFilter), this);
+
+        getLogger().info("RandomChunkGenerator enabled (corruption chance " + chance + ").");
     }
 
     @Override
     public void onDisable() {
-        logger.info("RandomChunkGenerator has been disabled!");
-    }
-
-    @Override
-    public @Nullable ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
-        return new RandomChunkGenerator();
-    }
-
-    @Override
-    public @Nullable BiomeProvider getDefaultBiomeProvider(@NotNull String worldName, @Nullable String id) {
-        return new RandomBiomeProvider();
+        getLogger().info("RandomChunkGenerator disabled.");
     }
 }

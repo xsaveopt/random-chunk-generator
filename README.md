@@ -1,32 +1,44 @@
 # RandomChunkGenerator
 
-A Minecraft PaperMC plugin that generates a world where every chunk is seeded differently.
+A Minecraft PaperMC plugin that lets the world generate normally — vanilla terrain and vanilla biomes — then randomly corrupts scattered chunks so the world is suddenly broken in places.
+
+## How it works
+
+The plugin does **not** replace world generation. Vanilla builds the normal world (real terrain, caves, structures, and biomes). When a new chunk finishes generating, the plugin rolls a per-chunk seed and, with a configurable chance, corrupts that chunk using one of three styles:
+
+- **Chaotic heights** — jagged stone walls and pits replace the terrain.
+- **Holes** — the chunk is voided out down to bedrock, leaving a sudden gap.
+- **Scrambled blocks** — existing blocks are replaced with random materials.
+
+Corruption is deterministic per chunk (world seed + chunk coordinates), so the same chunk always breaks the same way, and only happens once when the chunk is first generated.
+
+## Compatibility
+
+Uses only stable Bukkit/Paper API (events, `Chunk`, `Block`, `Material`) — no custom generator and no dependency on the volatile `Biome` registry. Built against `1.21.11-R0.1-SNAPSHOT` with `api-version: 1.21`, so it runs on 1.21+ and forward.
 
 ## How to Build
-
-This project uses Maven. To build the plugin, run:
 
 ```bash
 mvn clean package
 ```
 
-Once completed, the built JAR file will be located at:
-`target/random-chunk-generator-1.0-SNAPSHOT.jar`
+The built JAR will be at `target/random-chunk-generator-<version>.jar`.
 
 ## How to Use
 
-To use this generator for a specific world, add it to your `bukkit.yml`:
+Drop the JAR into your server's `plugins/` folder and restart. It applies to every world by default — no `bukkit.yml` generator entry needed.
+
+## Configuration
+
+`plugins/RandomChunkGenerator/config.yml`:
 
 ```yaml
-worlds:
-  world_name:
-    generator: RandomChunkGenerator
+corruption-chance: 0.15        # 0.0-1.0 chance a newly generated chunk is corrupted
+
+styles:
+  chaotic-heights: true
+  holes: true
+  scrambled-blocks: true
+
+worlds: []                     # empty = all worlds; otherwise only the listed world names
 ```
-
-Replace `world_name` with the name of the world you want to apply the generator to.
-
-## Features
-
-- **Unique Per-Chunk Seed**: Every chunk (16x16 blocks) uses its own seed derived from the world seed and its coordinates.
-- **Random Biomes**: Each chunk is assigned a random biome.
-- **Seed-Influenced Terrain**: The base height and bedrock patterns are determined by the chunk's unique seed.
