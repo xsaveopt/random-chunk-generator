@@ -3,6 +3,6 @@ corruption-chance: 0.15
 styles:
   chaotic-heights: true
   holes: true
-  scrambled-blocks: true
+  biome-shift: true
 
 worlds: []

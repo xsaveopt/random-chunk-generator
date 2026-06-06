@@ -15,11 +15,11 @@ public class RandomChunkPlugin extends JavaPlugin {
         double chance = config.getDouble("corruption-chance", 0.15);
         boolean chaotic = config.getBoolean("styles.chaotic-heights", true);
         boolean holes = config.getBoolean("styles.holes", true);
-        boolean scrambled = config.getBoolean("styles.scrambled-blocks", true);
+        boolean biomeShift = config.getBoolean("styles.biome-shift", true);
         List<String> worldFilter = config.getStringList("worlds");
 
         getServer().getPluginManager().registerEvents(
-                new ChunkCorruptionListener(chance, chaotic, holes, scrambled, worldFilter), this);
+                new ChunkCorruptionListener(chance, chaotic, holes, biomeShift, worldFilter), this);
 
         getLogger().info("RandomChunkGenerator enabled (corruption chance " + chance + ").");
     }
