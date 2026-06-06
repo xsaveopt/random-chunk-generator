@@ -19,7 +19,7 @@ public class RandomChunkPlugin extends JavaPlugin {
         List<String> worldFilter = config.getStringList("worlds");
 
         getServer().getPluginManager().registerEvents(
-                new ChunkCorruptionListener(chance, chaotic, holes, biomeShift, worldFilter), this);
+                new ChunkCorruptionListener(chance, chaotic, holes, biomeShift, worldFilter, getLogger()), this);
 
         getLogger().info("RandomChunkGenerator enabled (corruption chance " + chance + ").");
     }

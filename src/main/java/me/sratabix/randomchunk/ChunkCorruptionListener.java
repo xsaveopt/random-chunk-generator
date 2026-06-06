@@ -13,6 +13,7 @@ import org.bukkit.event.world.ChunkPopulateEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class ChunkCorruptionListener implements Listener {
 
@@ -22,16 +23,19 @@ public class ChunkCorruptionListener implements Listener {
     private final List<Style> styles;
     private final List<String> worldFilter;
     private final List<Biome> biomes;
+    private final Logger logger;
 
     public ChunkCorruptionListener(double corruptionChance, boolean chaoticHeights, boolean holes,
-                                   boolean biomeShift, List<String> worldFilter) {
+                                   boolean biomeShift, List<String> worldFilter, Logger logger) {
         this.corruptionChance = corruptionChance;
         this.worldFilter = worldFilter;
+        this.logger = logger;
         this.styles = new ArrayList<>();
         if (chaoticHeights) styles.add(Style.CHAOTIC);
         if (holes) styles.add(Style.HOLES);
         if (biomeShift) styles.add(Style.BIOME_SHIFT);
         this.biomes = buildBiomes();
+        logger.info("Loaded " + biomes.size() + " biomes for biome-shift.");
     }
 
     private static List<Biome> buildBiomes() {
@@ -118,9 +122,11 @@ public class ChunkCorruptionListener implements Listener {
 
     private void biomeShift(World world, Chunk chunk, Random random) {
         if (biomes.isEmpty()) {
+            logger.warning("biome-shift selected but no biomes are available.");
             return;
         }
         Biome biome = biomes.get(random.nextInt(biomes.size()));
+        logger.info("biome-shift @ " + chunk.getX() + "," + chunk.getZ() + " -> " + biome.getKey());
 
         int floor = world.getMinHeight();
         int ceiling = world.getMaxHeight() - 1;
@@ -134,5 +140,37 @@ public class ChunkCorruptionListener implements Listener {
                 }
             }
         }
+
+        Material surface = surfaceMaterial(biome);
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                int top = Math.min(ceiling, world.getHighestBlockYAt(baseX + x, baseZ + z));
+                Block block = chunk.getBlock(x, top, z);
+                if (!block.getType().isAir()) {
+                    block.setType(surface, false);
+                }
+            }
+        }
+    }
+
+    private static Material surfaceMaterial(Biome biome) {
+        String key = biome.getKey().getKey();
+        if (key.contains("snow") || key.contains("frozen") || key.contains("ice") || key.contains("grove")) {
+            return Material.SNOW_BLOCK;
+        }
+        if (key.contains("badlands")) return Material.RED_SAND;
+        if (key.contains("desert") || key.contains("beach")) return Material.SAND;
+        if (key.contains("mushroom")) return Material.MYCELIUM;
+        if (key.contains("swamp") || key.contains("mangrove")) return Material.MUD;
+        if (key.contains("crimson")) return Material.CRIMSON_NYLIUM;
+        if (key.contains("warped")) return Material.WARPED_NYLIUM;
+        if (key.contains("soul")) return Material.SOUL_SOIL;
+        if (key.contains("basalt")) return Material.BASALT;
+        if (key.contains("nether")) return Material.NETHERRACK;
+        if (key.contains("end")) return Material.END_STONE;
+        if (key.contains("dripstone")) return Material.DRIPSTONE_BLOCK;
+        if (key.contains("lush")) return Material.MOSS_BLOCK;
+        if (key.contains("peaks") || key.contains("stony") || key.contains("windswept")) return Material.STONE;
+        return Material.GRASS_BLOCK;
     }
 }
