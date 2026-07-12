@@ -1,4 +1,4 @@
-package me.sratabix.randomchunk;
+package me.xsaveopt.randomchunk;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;

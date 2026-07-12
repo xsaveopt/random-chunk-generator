@@ -1,6 +1,6 @@
 name: RandomChunkGenerator
 version: '${project.version}'
-main: me.sratabix.randomchunk.RandomChunkPlugin
+main: me.xsaveopt.randomchunk.RandomChunkPlugin
 api-version: '1.21'
-author: sratabix
+author: xsaveopt
 description: Lets vanilla generate the world, then randomly corrupts scattered chunks.
