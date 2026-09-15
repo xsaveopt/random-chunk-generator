@@ -1,32 +1,38 @@
 # RandomChunkGenerator
 
-A PaperMC plugin that lets the world generate normally, then randomly corrupts scattered chunks. Corruption is deterministic per chunk (world seed + coordinates) and applied once, when the chunk first generates.
+RandomChunkGenerator is a Paper plugin that lets the world generate as usual and then corrupts a random scattering of chunks as they are populated for the first time.
+Whether a chunk is hit, and how, comes from the world seed and the chunk coordinates, so the same seed always corrupts the same chunks in the same way.
 
-Styles:
+A corrupted chunk gets one of three styles, picked evenly from the ones you have enabled.
+Chaotic heights rebuilds every column as stone up to a random height around sea level, which leaves jagged walls and pits.
+Holes clears every block above the bottom layer of the world.
+Biome shift assigns the whole chunk a random biome from the registry and swaps its surface blocks for ones that roughly match, so the seams with its neighbours stand out.
 
-- **Chaotic heights** — jagged stone walls and pits.
-- **Holes** — the chunk is voided out down to bedrock.
-- **Biome shift** — the chunk is reassigned to a random foreign biome, breaking the seams.
+## Install
 
-## Build
+The plugin needs a Paper server on Minecraft 1.21 or newer.
+Tagged versions publish a built jar on the GitHub Releases page, or you can build one yourself with Maven and Java 21:
 
-```bash
+```sh
 mvn clean package
 ```
 
-Output: `target/random-chunk-generator-<version>.jar`. Drop it in `plugins/` and restart. Requires 1.21+.
+That produces target/random-chunk-generator-{version}.jar, which goes in the server's plugins folder before a restart.
 
 ## Configuration
 
-`plugins/RandomChunkGenerator/config.yml`:
+The first start writes plugins/RandomChunkGenerator/config.yml, and changes to it take effect on the next restart.
 
-```yaml
-corruption-chance: 0.15        # 0.0-1.0 chance a newly generated chunk is corrupted
+| Key | Meaning |
+| --- | --- |
+| `corruption-chance` | Probability from 0.0 to 1.0 that a newly populated chunk is corrupted |
+| `styles.chaotic-heights` | Enables the chaotic heights style |
+| `styles.holes` | Enables the holes style |
+| `styles.biome-shift` | Enables the biome shift style |
+| `worlds` | World names the plugin applies to, with an empty list meaning every world |
 
-styles:
-  chaotic-heights: true
-  holes: true
-  biome-shift: true
+With every style turned off the plugin leaves all chunks alone.
 
-worlds: []                     # empty = all worlds; otherwise only the listed world names
-```
+## License
+
+GPL-2.0, see LICENSE.
